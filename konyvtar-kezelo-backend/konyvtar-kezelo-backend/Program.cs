@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using konyvtar_kezelo_backend.Data;
 
 namespace konyvtar_kezelo_backend
 {
@@ -12,6 +14,10 @@ namespace konyvtar_kezelo_backend
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+            
+            // Set database connection
+            builder.Services.AddDbContext<LibraryDBContext>(options =>
+                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 
