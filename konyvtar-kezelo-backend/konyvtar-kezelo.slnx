@@ -1,4 +1,4 @@
 <Solution>
   <Project Path="konyvtar-kezelo-backend/konyvtar-kezelo-backend.csproj" />
-  <Project Path="konyvtar-kezelo-frontend/konyvtar-kezelo-frontend.csproj" />
+  <Project Path="konyvtar-kezelo-frontend/konyvtar_kezelo_frontend.csproj" />
 </Solution>
