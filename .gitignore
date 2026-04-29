@@ -9,6 +9,7 @@
 
 # Visual Studio folders and files
 .vs/
+.idea/
 
 # Build results
 [Dd]ebug/
