@@ -1,0 +1,62 @@
+﻿@page "/Librarian/AddBorrowing"
+@using konyvtar_kezelo_frontend.Models
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3 class="mb-4">Add New Borrowing</h3>
+
+<div class="row">
+    <div class="col-md-6">
+        <EditForm Model="newBorrowing" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            
+            <div class="mb-3">
+                <label for="readerId" class="form-label">Reader ID</label>
+                <InputNumber id="readerId" class="form-control" @bind-Value="newBorrowing.ReaderId" />
+                <ValidationMessage For="@(() => newBorrowing.ReaderId)" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label for="bookId" class="form-label">Book ID</label>
+                <InputNumber id="bookId" class="form-control" @bind-Value="newBorrowing.BookId" />
+                <ValidationMessage For="@(() => newBorrowing.BookId)" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label for="borrowDate" class="form-label">Borrow Date</label>
+                <InputDate id="borrowDate" class="form-control" @bind-Value="newBorrowing.BorrowDate" />
+                <ValidationMessage For="@(() => newBorrowing.BorrowDate)" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label for="returnDeadline" class="form-label">Return Deadline</label>
+                <InputDate id="returnDeadline" class="form-control" @bind-Value="newBorrowing.ReturnDeadline" />
+                <ValidationMessage For="@(() => newBorrowing.ReturnDeadline)" class="text-danger" />
+            </div>
+
+            <button type="submit" class="btn btn-success">Save Borrowing</button>
+            <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">Cancel</button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private Borrowing newBorrowing = new Borrowing();
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            NavigationManager.NavigateTo("/Librarian/Borrowings");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving data: {ex.Message}");
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/Librarian/Borrowings");
+    }
+}

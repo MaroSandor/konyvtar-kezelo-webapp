@@ -1,10 +1,10 @@
-﻿@page "/Librarian/Books"
+﻿@page "/Librarian/Readers"
 @using konyvtar_kezelo_frontend.Models
 @inject HttpClient Http
 
-<h3 class="mb-4">Manage Books</h3>
+<h3 class="mb-4">Manage Readers</h3>
 
-@if (books == null)
+@if (readers == null)
 {
     <div class="d-flex align-items-center">
         <strong>Loading...</strong>
@@ -14,29 +14,27 @@
 else
 {
     <div class="mb-3">
-        <button class="btn btn-primary">Add New Book</button>
+        <button class="btn btn-primary">Add New Reader</button>
     </div>
 
     <table class="table table-striped table-hover">
         <thead class="table-dark">
             <tr>
                 <th>ID</th>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Publisher</th>
-                <th>Release Year</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Birth Year</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var book in books)
+            @foreach (var reader in readers)
             {
                 <tr>
-                    <td>@book.Id</td>
-                    <td>@book.Title</td>
-                    <td>@book.Author</td>
-                    <td>@book.Publisher</td>
-                    <td>@book.ReleaseYear</td>
+                    <td>@reader.Id</td>
+                    <td>@reader.Name</td>
+                    <td>@reader.Address</td>
+                    <td>@reader.BirthYear</td>
                     <td>
                         <button class="btn btn-sm btn-warning">Edit</button>
                         <button class="btn btn-sm btn-danger">Delete</button>
@@ -48,18 +46,14 @@ else
 }
 
 @code {
-    private List<Book>? books;
+    private List<Reader>? readers;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            // Szimulált késleltetés és adatok a teszteléshez
-            await Task.Delay(500);
-            books = new List<Book>
-            {
-                new Book { Id = 1, Title = "Clean Code", Author = "Robert C. Martin", Publisher = "Prentice Hall", ReleaseYear = 2008 }
-            }; 
+            // Example: readers = await Http.GetFromJsonAsync<List<Reader>>("api/readers");
+            readers = new List<Reader>(); // empty list
         }
         catch (Exception ex)
         {
