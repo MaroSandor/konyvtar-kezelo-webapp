@@ -1,6 +1,7 @@
 using konyvtar_kezelo_backend.Data;
 using konyvtar_kezelo_backend.Models;
 using konyvtar_kezelo_backend.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace konyvtar_kezelo_backend.Services;
@@ -27,9 +28,16 @@ public class BookService : IBookService
 
     public async Task<Book?> UpdateAsync(int id, Book book)
     {
-        _context.Books.Update(book);
+        var existing = await _context.Books.FindAsync(id);
+        if (existing is null) return null;
+        
+        existing.Title = book.Title;
+        existing.Author = book.Author;
+        existing.Publisher = book.Publisher;
+        existing.ReleaseYear = book.ReleaseYear;
+        
         await _context.SaveChangesAsync();
-        return book;
+        return existing;
     }
 
     public async Task<bool> DeleteAsync(int id)
