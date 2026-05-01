@@ -6,16 +6,16 @@ public class Book
 {
     public int Id { get; set; }
     
-    [Required]
+    [Required(ErrorMessage = "A könyv címe kötelező!")]
     public string Title { get; set; }
     
-    [Required]
+    [Required(ErrorMessage = "A szerző neve kötelező!")]
     public string Author { get; set; }
     
-    [Required]
+    [Required(ErrorMessage = "A kiadó neve kötelező!")]
     public string Publisher { get; set; }
     
-    [Range(0, int.MaxValue, ErrorMessage = "Release year can not be smaller than zero.")]
+    [Range(0, int.MaxValue, ErrorMessage = "Kiadási dátum nem lehet kisebb mint 0.")]
     public int ReleaseYear { get; set; }
 
     public ICollection<Borrowing> Borrowings { get; set; } = [];

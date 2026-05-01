@@ -6,14 +6,14 @@ public class Reader
 {
     public int Id { get; set; }
     
-    [Required]
-    public string Name { get; set; }
+    [Required(ErrorMessage = "Az olvasó neve kötelező!")]
+    public string Name { get; set; } = string.Empty;
     
-    [Required]
-    public string Address { get; set; }
+    [Required(ErrorMessage = "Az olvasó címe kötelező!")]
+    public string Address { get; set; } = string.Empty;
 
-    [Required]
-    public DateTime BirthDate { get; set; }
+    [Required(ErrorMessage = "Az olvasó születési détuma kötelező!")]
+    public DateOnly BirthDate { get; set; }
     
     public ICollection<Borrowing> Borrowings { get; set; } = [];
 }
