@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using konyvtar_kezelo_backend.Data;
+using konyvtar_kezelo_backend.Services;
+using konyvtar_kezelo_backend.Services.Interfaces;
 
 namespace konyvtar_kezelo_backend
 {
@@ -18,7 +20,11 @@ namespace konyvtar_kezelo_backend
             // Set database connection
             builder.Services.AddDbContext<LibraryDBContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+            
+            // Set services
+            builder.Services.AddScoped<IBookService, BookService>(); // Scope mert HTTPS kérésenként egy példányt kell visszaadni
+            builder.Services.AddScoped<IReaderService, ReaderService>();
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
