@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using konyvtar_kezelo_backend.Data;
 using konyvtar_kezelo_backend.Models;
+using konyvtar_kezelo_backend.Models.DTOs;
 using konyvtar_kezelo_backend.Services.Interfaces;
 
 namespace konyvtar_kezelo_backend.Services;
@@ -15,16 +16,16 @@ public class BorrowingService : IBorrowingService
         _context = context;
     }
 
-    public async Task<IEnumerable<BorrowingResponseDTO>> GetAllAsync() =>
+    public async Task<IEnumerable<BorrowingResponseDto>> GetAllAsync() =>
         (await _context.Borrowings.ToListAsync()).Select(ToDto);
 
-    public async Task<BorrowingResponseDTO?> GetByIdAsync(int id)
+    public async Task<BorrowingResponseDto?> GetByIdAsync(int id)
     {
         var borrowing = await _context.Borrowings.FindAsync(id);
         return borrowing is null ? null : ToDto(borrowing);
     }
 
-    public async Task<BorrowingResponseDTO> CreateAsync(Borrowing borrowing)
+    public async Task<BorrowingResponseDto> CreateAsync(Borrowing borrowing)
     {
         if (borrowing.BorrowDate < DateTime.Today)
             throw new ArgumentException("A kölcsönzési idő nem lehet régebben mint a mai nap!");
@@ -37,7 +38,7 @@ public class BorrowingService : IBorrowingService
         return ToDto(borrowing);
     }
 
-    public async Task<BorrowingResponseDTO?> UpdateAsync(int id, Borrowing borrowing)
+    public async Task<BorrowingResponseDto?> UpdateAsync(int id, Borrowing borrowing)
     {
         var existing = await _context.Borrowings.FindAsync(id);
         if (existing is null)
@@ -68,7 +69,7 @@ public class BorrowingService : IBorrowingService
         return true;
     }
 
-    private static BorrowingResponseDTO ToDto(Borrowing borrowing) => new()
+    private static BorrowingResponseDto ToDto(Borrowing borrowing) => new()
     {
         Id = borrowing.Id,
         ReaderId = borrowing.ReaderId,
