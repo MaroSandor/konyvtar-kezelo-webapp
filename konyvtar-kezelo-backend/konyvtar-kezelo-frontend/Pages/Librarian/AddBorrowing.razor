@@ -34,8 +34,10 @@
                 <ValidationMessage For="@(() => newBorrowing.ReturnDeadline)" class="text-danger" />
             </div>
 
-            <button type="submit" class="btn btn-success">Save Borrowing</button>
-            <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">Cancel</button>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-success">Record Borrowing</button>
+                <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">Cancel</button>
+            </div>
         </EditForm>
     </div>
 </div>
@@ -47,11 +49,16 @@
     {
         try
         {
-            NavigationManager.NavigateTo("/Librarian/Borrowings");
+            var response = await Http.PostAsJsonAsync("api/borrowings", newBorrowing);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/Librarian/Borrowings");
+            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error saving data: {ex.Message}");
+            Console.WriteLine($"Error: {ex.Message}");
         }
     }
 

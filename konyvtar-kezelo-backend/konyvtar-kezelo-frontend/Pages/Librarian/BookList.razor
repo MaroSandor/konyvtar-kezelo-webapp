@@ -54,12 +54,7 @@ else
     {
         try
         {
-            // Szimulált késleltetés és adatok a teszteléshez
-            await Task.Delay(500);
-            books = new List<Book>
-            {
-                new Book { Id = 1, Title = "Clean Code", Author = "Robert C. Martin", Publisher = "Prentice Hall", ReleaseYear = 2008 }
-            }; 
+            books = await Http.GetFromJsonAsync<List<Book>>("api/books");
         }
         catch (Exception ex)
         {

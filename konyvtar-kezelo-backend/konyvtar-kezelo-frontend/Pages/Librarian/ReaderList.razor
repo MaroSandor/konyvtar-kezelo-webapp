@@ -52,8 +52,7 @@ else
     {
         try
         {
-            // Example: readers = await Http.GetFromJsonAsync<List<Reader>>("api/readers");
-            readers = new List<Reader>(); // empty list
+            readers = await Http.GetFromJsonAsync<List<Reader>>("api/readers");
         }
         catch (Exception ex)
         {

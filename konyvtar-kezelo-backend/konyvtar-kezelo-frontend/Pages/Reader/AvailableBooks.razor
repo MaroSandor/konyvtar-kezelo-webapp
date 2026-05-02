@@ -1,0 +1,61 @@
+﻿@page "/Reader/Books"
+@using konyvtar_kezelo_frontend.Models
+@inject HttpClient Http
+
+<h3 class="mb-4">Available Books</h3>
+
+@if (availableBooks == null)
+{
+    <div class="d-flex align-items-center">
+        <strong>Loading...</strong>
+        <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+    </div>
+}
+else if (!availableBooks.Any())
+{
+    <div class="alert alert-info">There are currently no books available to borrow.</div>
+}
+else
+{
+    <div class="row">
+        @foreach (var book in availableBooks)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">@book.Title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">@book.Author</h6>
+                        <hr />
+                        <p class="card-text">
+                            <strong>Publisher:</strong> @book.Publisher<br />
+                            <strong>Release Year:</strong> @book.ReleaseYear
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Book>? availableBooks;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            
+            await Task.Delay(500);
+            availableBooks = new List<Book>
+            {
+                new Book { Id = 1, Title = "The Hobbit", Author = "J.R.R. Tolkien", Publisher = "Allen & Unwin", ReleaseYear = 1937 },
+                new Book { Id = 2, Title = "1984", Author = "George Orwell", Publisher = "Secker & Warburg", ReleaseYear = 1949 },
+                new Book { Id = 3, Title = "Dune", Author = "Frank Herbert", Publisher = "Chilton Books", ReleaseYear = 1965 }
+            };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching data: {ex.Message}");
+        }
+    }
+}

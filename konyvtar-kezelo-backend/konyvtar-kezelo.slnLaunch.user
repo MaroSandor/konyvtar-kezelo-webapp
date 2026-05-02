@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "konyvtar-kezelo-backend\\konyvtar_kezelo_backend.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "konyvtar-kezelo-frontend\\konyvtar_kezelo_frontend.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

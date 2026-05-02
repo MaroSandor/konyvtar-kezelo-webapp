@@ -1,61 +1,70 @@
-﻿@page "/Librarian/Borrowings"
+﻿@page "/Reader/Borrowings"
 @using konyvtar_kezelo_frontend.Models
 @inject HttpClient Http
 
-<h3 class="mb-4">Manage Borrowings</h3>
+<h3 class="mb-4">My Borrowings</h3>
 
-@if (borrowings == null)
+@if (myBorrowings == null)
 {
     <div class="d-flex align-items-center">
         <strong>Loading...</strong>
         <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
     </div>
 }
+else if (!myBorrowings.Any())
+{
+    <div class="alert alert-info">You have no active or past borrowings.</div>
+}
 else
 {
-    <div class="mb-3">
-        <button class="btn btn-primary">Add New Borrowing</button>
-    </div>
-
     <table class="table table-striped table-hover">
         <thead class="table-dark">
             <tr>
-                <th>ID</th>
-                <th>Reader ID</th>
                 <th>Book ID</th>
                 <th>Borrow Date</th>
-                <th>Deadline</th>
+                <th>Return Deadline</th>
                 <th>Late Fee</th>
-                <th>Actions</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var borrowing in borrowings)
+            @foreach (var borrowing in myBorrowings)
             {
                 <tr>
-                    <td>@borrowing.Id</td>
-                    <td>@borrowing.ReaderId</td>
                     <td>@borrowing.BookId</td>
                     <td>@borrowing.BorrowDate.ToShortDateString()</td>
                     <td>@borrowing.ReturnDeadline.ToShortDateString()</td>
                     <td class="text-danger fw-bold">@borrowing.LateFee Ft</td>
                     <td>
-                        <button class="btn btn-sm btn-warning">Edit</button>
-                        <button class="btn btn-sm btn-danger">Delete</button>
+                        @if (borrowing.ReturnDeadline < DateTime.Today)
+                        {
+                            <span class="badge bg-danger">Overdue</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 }
+
 @code {
-    private List<Borrowing>? borrowings;
+    private List<Borrowing>? myBorrowings;
+    
+    private int currentReaderId = 1;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            borrowings = await Http.GetFromJsonAsync<List<Borrowing>>("api/borrowings");
+            myBorrowings = new List<Borrowing>
+            {
+                new Borrowing { BookId = 2, BorrowDate = DateTime.Today.AddDays(-20), ReturnDeadline = DateTime.Today.AddDays(-6), LateFee = 1500 },
+                new Borrowing { BookId = 5, BorrowDate = DateTime.Today.AddDays(-2), ReturnDeadline = DateTime.Today.AddDays(12), LateFee = 0 }
+            };
         }
         catch (Exception ex)
         {
