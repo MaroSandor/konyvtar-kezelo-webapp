@@ -24,6 +24,7 @@ namespace konyvtar_kezelo_backend
             // Set services
             builder.Services.AddScoped<IBookService, BookService>(); // Scope mert HTTPS kérésenként egy példányt kell visszaadni
             builder.Services.AddScoped<IReaderService, ReaderService>();
+            builder.Services.AddScoped<IBorrowingService, BorrowingService>();
             
             var app = builder.Build();
 
