@@ -1,0 +1,94 @@
+﻿@page "/Librarian/EditBook/{Id:int}"
+@using konyvtar_kezelo_frontend.Models
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3 class="mb-4">Edit Book</h3>
+
+@if (bookToEdit == null)
+{
+    <div class="d-flex align-items-center">
+        <strong>Loading book data...</strong>
+        <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-6">
+            <EditForm Model="bookToEdit" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <InputText id="title" class="form-control" @bind-Value="bookToEdit.Title" />
+                    <ValidationMessage For="@(() => bookToEdit.Title)" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="author" class="form-label">Author</label>
+                    <InputText id="author" class="form-control" @bind-Value="bookToEdit.Author" />
+                    <ValidationMessage For="@(() => bookToEdit.Author)" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="publisher" class="form-label">Publisher</label>
+                    <InputText id="publisher" class="form-control" @bind-Value="bookToEdit.Publisher" />
+                    <ValidationMessage For="@(() => bookToEdit.Publisher)" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="releaseYear" class="form-label">Release Year</label>
+                    <InputNumber id="releaseYear" class="form-control" @bind-Value="bookToEdit.ReleaseYear" />
+                    <ValidationMessage For="@(() => bookToEdit.ReleaseYear)" class="text-danger" />
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-warning">Update Book</button>
+                    <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">Cancel</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Book? bookToEdit;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            bookToEdit = await Http.GetFromJsonAsync<Book>($"api/books/{Id}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching data: {ex.Message}");
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var response = await Http.PutAsJsonAsync($"api/books/{Id}", bookToEdit);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/Librarian/Books");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating data: {ex.Message}");
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/Librarian/Books");
+    }
+}

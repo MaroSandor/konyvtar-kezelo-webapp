@@ -41,7 +41,7 @@
     {
         try
         {
-            // Example: await Http.PostAsJsonAsync("api/readers", newReader);
+            await Http.PostAsJsonAsync("api/readers", newReader);
             NavigationManager.NavigateTo("/Librarian/Readers");
         }
         catch (Exception ex)

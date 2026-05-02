@@ -40,15 +40,14 @@ else
                     <td>@borrowing.ReturnDeadline.ToShortDateString()</td>
                     <td class="text-danger fw-bold">@borrowing.LateFee Ft</td>
                     <td>
-                        <button class="btn btn-sm btn-warning">Edit</button>
-                        <button class="btn btn-sm btn-danger">Delete</button>
+                        <a href="/Librarian/EditBorrowing/@borrowing.Id" class="btn btn-sm btn-warning">Edit</a>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteBorrowing(borrowing.Id)">Delete</button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 }
-
 @code {
     private List<Borrowing>? borrowings;
 
@@ -56,12 +55,32 @@ else
     {
         try
         {
-            
-            borrowings = new List<Borrowing>(); // Temporary empty list
+            borrowings = await Http.GetFromJsonAsync<List<Borrowing>>("api/borrowings");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching data: {ex.Message}");
+        }
+    }
+
+    private async Task DeleteBorrowing(int id)
+    {
+        try
+        {
+            var response = await Http.DeleteAsync($"api/borrowings/{id}");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                borrowings = await Http.GetFromJsonAsync<List<Borrowing>>("api/borrowings");
+            }
+            else
+            {
+                Console.WriteLine("Hiba történt a törlés során.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Kivétel történt: {ex.Message}");
         }
     }
 }

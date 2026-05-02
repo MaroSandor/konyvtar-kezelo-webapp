@@ -1,0 +1,60 @@
+﻿@page "/Librarian/EditReader/{Id:int}"
+@using konyvtar_kezelo_frontend.Models
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3 class="mb-4">Edit Reader</h3>
+
+@if (readerToEdit == null)
+{
+    <div class="spinner-border text-primary" role="status"></div>
+}
+else
+{
+    <div class="card p-4 shadow-sm" style="max-width: 500px;">
+        <EditForm Model="readerToEdit" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <InputText class="form-control" @bind-Value="readerToEdit.Name" />
+                <ValidationMessage For="@(() => readerToEdit.Name)" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Address</label>
+                <InputText class="form-control" @bind-Value="readerToEdit.Address" />
+                <ValidationMessage For="@(() => readerToEdit.Address)" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Birth Year</label>
+                <InputNumber class="form-control" @bind-Value="readerToEdit.BirthYear" />
+                <ValidationMessage For="@(() => readerToEdit.BirthYear)" />
+            </div>
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-warning">Save Changes</button>
+                <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">Cancel</button>
+            </div>
+        </EditForm>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Reader? readerToEdit;
+
+    protected override async Task OnInitializedAsync()
+    {
+        readerToEdit = await Http.GetFromJsonAsync<Reader>($"api/readers/{Id}");
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var response = await Http.PutAsJsonAsync($"api/readers/{Id}", readerToEdit);
+        if (response.IsSuccessStatusCode) NavigationManager.NavigateTo("/Librarian/Readers");
+    }
+
+    private void Cancel() => NavigationManager.NavigateTo("/Librarian/Readers");
+}

@@ -34,8 +34,10 @@
                 <ValidationMessage For="@(() => newBook.ReleaseYear)" class="text-danger" />
             </div>
 
-            <button type="submit" class="btn btn-success">Save Book</button>
-            <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">Cancel</button>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-success">Save Book</button>
+                <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">Cancel</button>
+            </div>
         </EditForm>
     </div>
 </div>
@@ -47,11 +49,20 @@
     {
         try
         {
-            NavigationManager.NavigateTo("/Librarian/Books");
+            var response = await Http.PostAsJsonAsync("api/books", newBook);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/Librarian/Books");
+            }
+            else
+            {
+                Console.WriteLine("Error during saving.");
+            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error saving data: {ex.Message}");
+            Console.WriteLine($"Error: {ex.Message}");
         }
     }
 

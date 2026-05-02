@@ -38,8 +38,8 @@ else
                     <td>@book.Publisher</td>
                     <td>@book.ReleaseYear</td>
                     <td>
-                        <button class="btn btn-sm btn-warning">Edit</button>
-                        <button class="btn btn-sm btn-danger">Delete</button>
+                        <a href="/Librarian/EditBook/@book.Id" class="btn btn-sm btn-warning">Edit</a>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteBook(book.Id)">Delete</button>
                     </td>
                 </tr>
             }
@@ -54,16 +54,32 @@ else
     {
         try
         {
-            // Szimulált késleltetés és adatok a teszteléshez
-            await Task.Delay(500);
-            books = new List<Book>
-            {
-                new Book { Id = 1, Title = "Clean Code", Author = "Robert C. Martin", Publisher = "Prentice Hall", ReleaseYear = 2008 }
-            }; 
+            books = await Http.GetFromJsonAsync<List<Book>>("api/books");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching data: {ex.Message}");
+        }
+    }
+
+    private async Task DeleteBook(int id)
+    {
+        try
+        {
+            var response = await Http.DeleteAsync($"api/books/{id}");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                books = await Http.GetFromJsonAsync<List<Book>>("api/books");
+            }
+            else
+            {
+                Console.WriteLine("Hiba történt a törlés során.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Kivétel történt: {ex.Message}");
         }
     }
 }
