@@ -60,7 +60,6 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
-# Databases, sources
-*.db
+# Sources
 *.png
 *.pdf
