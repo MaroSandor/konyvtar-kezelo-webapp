@@ -52,4 +52,8 @@ public class BookService : IBookService
         await _context.SaveChangesAsync();
         return true;
     }
+
+    public async Task<IEnumerable<Book>> GetAvailableAsync() => await _context.Books
+        .Where(book => !book.Borrowings.Any(br => !br.IsReturned))
+        .ToListAsync();
 }
