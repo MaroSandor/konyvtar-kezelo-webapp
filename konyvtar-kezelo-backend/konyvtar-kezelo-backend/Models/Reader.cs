@@ -12,7 +12,6 @@ public class Reader
     [Required(ErrorMessage = "Az olvasó címe kötelező!")]
     public string Address { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Az olvasó születési détuma kötelező!")]
     public DateOnly BirthDate { get; set; }
     
     public ICollection<Borrowing> Borrowings { get; set; } = [];
