@@ -76,7 +76,8 @@ public class BorrowingService : IBorrowingService
         BookId = borrowing.BookId,
         BorrowDate = borrowing.BorrowDate,
         DueDate = borrowing.DueDate,
-        LateFee = CalculateLateFee(borrowing.DueDate),
+        IsReturned = borrowing.IsReturned,
+        LateFee = CalculateLateFee(borrowing.DueDate)
     };
 
     private static decimal CalculateLateFee(DateTime dueDate)
