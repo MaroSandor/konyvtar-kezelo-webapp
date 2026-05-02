@@ -8,5 +8,5 @@ public class BorrowingResponseDto
     public DateTime BorrowDate { get; set; }
     public DateTime DueDate { get; set; }
     public decimal LateFee { get; set; }
-    public bool
+    public bool IsReturned { get; set; }
 }
