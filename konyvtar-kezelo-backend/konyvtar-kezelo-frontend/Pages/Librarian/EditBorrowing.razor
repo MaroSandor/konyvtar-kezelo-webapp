@@ -1,0 +1,57 @@
+﻿@page "/Librarian/EditBorrowing/{Id:int}"
+@using konyvtar_kezelo_frontend.Models
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3 class="mb-4">Edit Borrowing</h3>
+
+@if (borrowingToEdit == null)
+{
+    <div class="spinner-border text-primary" role="status"></div>
+}
+else
+{
+    <div class="card p-4 shadow-sm" style="max-width: 500px;">
+        <EditForm Model="borrowingToEdit" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            
+            <div class="mb-3">
+                <label class="form-label">Reader ID</label>
+                <InputNumber class="form-control" @bind-Value="borrowingToEdit.ReaderId" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Book ID</label>
+                <InputNumber class="form-control" @bind-Value="borrowingToEdit.BookId" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Return Deadline</label>
+                <InputDate class="form-control" @bind-Value="borrowingToEdit.ReturnDeadline" />
+            </div>
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-warning">Update Deadline</button>
+                <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">Cancel</button>
+            </div>
+        </EditForm>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Borrowing? borrowingToEdit;
+
+    protected override async Task OnInitializedAsync()
+    {
+        borrowingToEdit = await Http.GetFromJsonAsync<Borrowing>($"api/borrowings/{Id}");
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await Http.PutAsJsonAsync($"api/borrowings/{Id}", borrowingToEdit);
+        NavigationManager.NavigateTo("/Librarian/Borrowings");
+    }
+
+    private void Cancel() => NavigationManager.NavigateTo("/Librarian/Borrowings");
+}
