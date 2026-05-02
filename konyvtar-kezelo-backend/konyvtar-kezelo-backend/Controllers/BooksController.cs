@@ -34,7 +34,7 @@ public class BooksController : ControllerBase
     public async Task<IActionResult> Create(Book book)
     {
         var created = await _bookService.CreateAsync(book);
-        return Ok(created);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpPut("{id}")]
@@ -48,8 +48,10 @@ public class BooksController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
         var deleted = await _bookService.DeleteAsync(id);
         return deleted ? NoContent() : NotFound();
     }
+
+    [HttpGet("available")]
+    public async Task<IActionResult> GetAvailable() => Ok(await _bookService.GetAvailableAsync());
 }

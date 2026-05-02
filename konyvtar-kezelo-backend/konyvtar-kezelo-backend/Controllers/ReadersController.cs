@@ -28,15 +28,29 @@ public class ReadersController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(Reader reader)
     {
-        var created = await _readerService.CreateAsync(reader);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        try
+        {
+            var created = await _readerService.CreateAsync(reader);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, Reader reader)
     {
-        var updated = await _readerService.UpdateAsync(id, reader);
-        return updated is null ? NotFound() : Ok(updated);
+        try
+        {
+            var updated = await _readerService.UpdateAsync(id, reader);
+            return updated is null ? NotFound() : Ok(updated);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpDelete("{id}")]
