@@ -55,7 +55,7 @@ namespace konyvtar_kezelo_backend.Migrations
                     b.Property<DateTime>("BorrowDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("DueTime")
+                    b.Property<DateTime>("DueDate")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ReaderId")
@@ -80,7 +80,7 @@ namespace konyvtar_kezelo_backend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("BirthDate")
+                    b.Property<DateOnly>("BirthDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
