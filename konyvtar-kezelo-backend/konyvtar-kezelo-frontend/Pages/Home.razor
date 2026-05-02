@@ -1,7 +1,81 @@
 ﻿@page "/"
+@using konyvtar_kezelo_frontend.Models
+@inject HttpClient Http
 
-<PageTitle>Home</PageTitle>
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-4 fw-bold text-primary">Library Management System</h1>
+            <p class="lead text-muted">Welcome back! Here is a quick overview of your library status.</p>
+        </div>
+    </div>
 
-<h1>Hello, world!</h1>
+    @* Statistics Cards *@
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-primary text-white h-100">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center p-4">
+                    <h5 class="card-title opacity-75">Total Books</h5>
+                    <h2 class="display-5 fw-bold">@bookCount</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-success text-white h-100">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center p-4">
+                    <h5 class="card-title opacity-75">Active Readers</h5>
+                    <h2 class="display-5 fw-bold">@readerCount</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-warning text-dark h-100">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center p-4">
+                    <h5 class="card-title opacity-75">Current Borrowings</h5>
+                    <h2 class="display-5 fw-bold">@borrowingCount</h2>
+                </div>
+            </div>
+        </div>
+    </div>
 
-Welcome to your new app.
+    @* Quick Links / Actions *@
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="card border-0 shadow-sm p-4">
+                <h4 class="mb-4">Quick Actions</h4>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="/Librarian/AddBook" class="btn btn-outline-primary px-4 py-2">Add New Book</a>
+                    <a href="/Librarian/AddReader" class="btn btn-outline-success px-4 py-2">Register Reader</a>
+                    <a href="/Librarian/Borrowings" class="btn btn-outline-warning px-4 py-2">Manage Borrowings</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private int bookCount = 0;
+    private int readerCount = 0;
+    private int borrowingCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var books = await Http.GetFromJsonAsync<List<Book>>("api/books");
+            bookCount = books?.Count ?? 0;
+
+            var readers = await Http.GetFromJsonAsync<List<konyvtar_kezelo_frontend.Models.Reader>>("api/readers");
+            readerCount = readers?.Count ?? 0;
+
+            var borrowings = await Http.GetFromJsonAsync<List<Borrowing>>("api/borrowings");
+            borrowingCount = borrowings?.Count ?? 0;
+        }
+        catch (Exception)
+        {
+            bookCount = 0; 
+            readerCount = 0;
+            borrowingCount = 0;
+        }
+    }
+}

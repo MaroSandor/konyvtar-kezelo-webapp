@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
+<div class="page @(isDarkMode ? "dark-theme" : "")">
     <div class="sidebar">
         <NavMenu />
     </div>
@@ -10,4 +10,18 @@
             @Body
         </article>
     </main>
+
+    @* Switch Button *@
+    <button class="theme-toggler" @onclick="ToggleTheme">
+        @(isDarkMode ? "☀️" : "🌙")
+    </button>
 </div>
+
+@code {
+    private bool isDarkMode = false;
+
+    private void ToggleTheme()
+    {
+        isDarkMode = !isDarkMode;
+    }
+}
