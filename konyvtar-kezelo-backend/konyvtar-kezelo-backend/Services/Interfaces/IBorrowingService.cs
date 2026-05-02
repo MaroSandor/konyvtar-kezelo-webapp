@@ -1,12 +1,13 @@
 using konyvtar_kezelo_backend.Models;
+using konyvtar_kezelo_backend.Models.DTOs;
 
 namespace konyvtar_kezelo_backend.Services.Interfaces;
 
 public interface IBorrowingService
 {
-    Task<IEnumerable<BorrowingResponseDTO>> GetAllAsync();
-    Task<BorrowingResponseDTO?> GetByIdAsync(int id);
-    Task<BorrowingResponseDTO> CreateAsync(Borrowing borrowing);
-    Task<BorrowingResponseDTO?> UpdateAsync(int id, Borrowing borrowing);
+    Task<IEnumerable<BorrowingResponseDto>> GetAllAsync();
+    Task<BorrowingResponseDto?> GetByIdAsync(int id);
+    Task<BorrowingResponseDto> CreateAsync(Borrowing borrowing);
+    Task<BorrowingResponseDto?> UpdateAsync(int id, Borrowing borrowing);
     Task<bool> DeleteAsync(int id);
 }
