@@ -1,6 +1,6 @@
-namespace konyvtar_kezelo_backend.Models;
+namespace konyvtar_kezelo_backend.Models.DTOs;
 
-public class BorrowingResponseDTO
+public class BorrowingResponseDto
 {
     public int Id { get; set; }
     public int ReaderId { get; set; }
@@ -8,4 +8,5 @@ public class BorrowingResponseDTO
     public DateTime BorrowDate { get; set; }
     public DateTime DueDate { get; set; }
     public decimal LateFee { get; set; }
+    public bool
 }
