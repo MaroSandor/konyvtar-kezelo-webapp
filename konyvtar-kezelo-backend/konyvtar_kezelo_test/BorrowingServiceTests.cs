@@ -233,4 +233,52 @@ public class BorrowingServiceTests
 
         Assert.Null(result);
     }
+
+    [Fact]
+
+    public async Task GetByReaderIdAsync_ValidReaderId_ReturnsBookings()
+    {
+        var db = CreateDb();
+        var service = new BorrowingService(db);
+
+        var borrowing = new Borrowing
+        {
+            ReaderId = 1,
+            BookId = 1,
+            BorrowDate = DateTime.Today,
+            DueDate = DateTime.Today.AddDays(14)
+        };
+        db.Borrowings.Add(borrowing);
+
+        await db.SaveChangesAsync();
+
+        var result = await service.GetByReaderIdAsync(1);
+
+
+        Assert.Single(result);
+
+    }
+
+    [Fact]
+
+    public async Task ReturnBookAsync_IsReturnedTrue()
+    {
+        var db = CreateDb();
+        var service = new BorrowingService(db);
+
+        var borrowing = new Borrowing
+        {
+            ReaderId = 1,
+            BookId = 1,
+            BorrowDate = DateTime.Today,
+            DueDate = DateTime.Today.AddDays(14)
+        };
+        db.Borrowings.Add(borrowing);
+        await db.SaveChangesAsync();
+
+       var result =await service.ReturnBookAsync(borrowing.Id);
+
+        Assert.True(result.IsReturned);
+
+    }
 }
