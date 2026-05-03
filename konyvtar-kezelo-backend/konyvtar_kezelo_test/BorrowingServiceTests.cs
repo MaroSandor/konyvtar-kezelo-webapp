@@ -276,9 +276,9 @@ public class BorrowingServiceTests
         db.Borrowings.Add(borrowing);
         await db.SaveChangesAsync();
 
-       var result =await service.ReturnBookAsync(borrowing.Id);
+        var result =await service.ReturnBookAsync(borrowing.Id);
 
-        Assert.True(result.IsReturned);
+        Assert.True(result!.IsReturned);
 
     }
 }
