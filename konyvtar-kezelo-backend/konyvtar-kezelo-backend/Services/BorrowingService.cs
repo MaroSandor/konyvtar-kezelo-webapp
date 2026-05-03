@@ -40,6 +40,11 @@ public class BorrowingService : IBorrowingService
 
     public async Task<BorrowingResponseDto?> UpdateAsync(int id, Borrowing borrowing)
     {
+        if (borrowing.BorrowDate < DateTime.Today)
+            throw new ArgumentException("A kölcsönzési idő nem lehet régebben mint a mai nap!");
+        if (borrowing.DueDate <= borrowing.BorrowDate)
+            throw new ArgumentException("A határidő nem lehet régebben mint a kölcsönzési idő!");
+            
         var existing = await _context.Borrowings.FindAsync(id);
         if (existing is null)
         {
