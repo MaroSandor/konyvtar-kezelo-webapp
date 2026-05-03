@@ -69,6 +69,21 @@ public class BorrowingService : IBorrowingService
         return true;
     }
 
+    public async Task<IEnumerable<BorrowingResponseDto>> GetByReaderIdAsync(int readerId) =>
+        (await _context.Borrowings.Where(borrowing => borrowing.ReaderId == readerId)
+            .ToListAsync())
+        .Select(ToDto);
+
+    public async Task<BorrowingResponseDto?> ReturnBookAsync(int id)
+    {
+        var borrowing = await _context.Borrowings.FindAsync(id);
+        if (borrowing is null) return null;
+        
+        borrowing.IsReturned = true;
+        await _context.SaveChangesAsync();
+        return ToDto(borrowing);
+    }
+
     private static BorrowingResponseDto ToDto(Borrowing borrowing) => new()
     {
         Id = borrowing.Id,

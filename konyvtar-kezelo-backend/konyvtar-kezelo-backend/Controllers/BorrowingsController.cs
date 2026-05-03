@@ -59,4 +59,15 @@ public class BorrowingsController: ControllerBase
         var deleted = await _borrowingService.DeleteAsync(id);
         return deleted ? NoContent() : NotFound();
     }
+
+    [HttpGet("reader/{readerId}")]
+    public async Task<IActionResult> GetByReaderId(int readerId) =>
+        Ok(await _borrowingService.GetByReaderIdAsync(readerId));
+
+    [HttpPatch("{id}/return")]
+    public async Task<IActionResult> ReturnBook(int id)
+    {
+        var result = await _borrowingService.ReturnBookAsync(id);
+        return result is null ? NotFound() : Ok(result);
+    }
 }

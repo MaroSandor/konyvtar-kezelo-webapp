@@ -10,4 +10,6 @@ public interface IBorrowingService
     Task<BorrowingResponseDto> CreateAsync(Borrowing borrowing);
     Task<BorrowingResponseDto?> UpdateAsync(int id, Borrowing borrowing);
     Task<bool> DeleteAsync(int id);
+    Task<IEnumerable<BorrowingResponseDto>> GetByReaderIdAsync(int readerId);
+    Task<BorrowingResponseDto?> ReturnBookAsync(int id);
 }
