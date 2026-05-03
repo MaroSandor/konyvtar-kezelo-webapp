@@ -26,6 +26,17 @@ namespace konyvtar_kezelo_backend
             builder.Services.AddScoped<IReaderService, ReaderService>();
             builder.Services.AddScoped<IBorrowingService, BorrowingService>();
             
+            // Set CORS policy
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -33,7 +44,9 @@ namespace konyvtar_kezelo_backend
             {
                 app.MapOpenApi();
             }
-
+            
+            app.UseCors("AllowFrontend");
+            
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
