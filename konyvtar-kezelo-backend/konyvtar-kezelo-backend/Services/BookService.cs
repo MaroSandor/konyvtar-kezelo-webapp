@@ -1,7 +1,6 @@
 using konyvtar_kezelo_backend.Data;
 using konyvtar_kezelo_backend.Models;
 using konyvtar_kezelo_backend.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace konyvtar_kezelo_backend.Services;
@@ -15,13 +14,10 @@ public class BookService : IBookService
         _context = context;
     }
 
-    // Get all books, get book by id, create book, update book, delete book
     public async Task<IEnumerable<Book>> GetAllAsync() => await _context.Books.ToListAsync();
 
-    // Get book by id, return null if not found
     public async Task<Book?> GetByIdAsync(int id) => await _context.Books.FindAsync(id);
 
-    // Create book, return created book
     public async Task<Book> CreateAsync(Book book)
     {
         _context.Books.Add(book);
