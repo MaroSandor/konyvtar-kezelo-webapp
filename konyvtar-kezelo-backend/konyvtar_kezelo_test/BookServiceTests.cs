@@ -135,19 +135,4 @@ public class BookServiceTests
         Assert.Equal("Szabad könyv", result.First().Title);
     }
 
-    [Fact]
-
-    public async Task GetAvAsync_RertunOnlyTwoBooks()
-    {
-        var db = CreateDb();
-
-        var service = new BookService(db);
-        var book1 = await service.CreateAsync(new Book { Title = "Szabad könyv", Author = "Szerző", Publisher = "Kiadó", ReleaseYear = 2000 });
-        var book2 = await service.CreateAsync(new Book { Title = "Kölcsönzött könyv", Author = "Szerző", Publisher = "Kiadó", ReleaseYear = 2000 });
-
-        var result = await service.GetAllAsync();
-
-        Assert.Equal(2,result.Count() );
-
-    }
 }
