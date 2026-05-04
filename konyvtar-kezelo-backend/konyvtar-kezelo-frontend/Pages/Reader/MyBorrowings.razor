@@ -33,10 +33,10 @@ else
                 <tr>
                     <td>@borrowing.BookId</td>
                     <td>@borrowing.BorrowDate.ToShortDateString()</td>
-                    <td>@borrowing.ReturnDeadline.ToShortDateString()</td>
+                    <td>@borrowing.DueDate.ToShortDateString()</td>
                     <td class="text-danger fw-bold">@borrowing.LateFee Ft</td>
                     <td>
-                        @if (borrowing.ReturnDeadline < DateTime.Today)
+                        @if (borrowing.DueDate < DateTime.Today)
                         {
                             <span class="badge bg-danger">Overdue</span>
                         }
@@ -62,8 +62,8 @@ else
         {
             myBorrowings = new List<Borrowing>
             {
-                new Borrowing { BookId = 2, BorrowDate = DateTime.Today.AddDays(-20), ReturnDeadline = DateTime.Today.AddDays(-6), LateFee = 1500 },
-                new Borrowing { BookId = 5, BorrowDate = DateTime.Today.AddDays(-2), ReturnDeadline = DateTime.Today.AddDays(12), LateFee = 0 }
+                new Borrowing { BookId = 2, BorrowDate = DateTime.Today.AddDays(-20), DueDate = DateTime.Today.AddDays(-6), LateFee = 1500 },
+                new Borrowing { BookId = 5, BorrowDate = DateTime.Today.AddDays(-2), DueDate = DateTime.Today.AddDays(12), LateFee = 0 }
             };
         }
         catch (Exception ex)

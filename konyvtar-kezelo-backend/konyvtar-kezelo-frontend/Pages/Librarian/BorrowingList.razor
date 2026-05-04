@@ -21,8 +21,8 @@ else
         <thead class="table-dark">
             <tr>
                 <th>ID</th>
-                <th>Reader ID</th>
-                <th>Book ID</th>
+                <th>Reader Name</th>
+                <th>Book Title</th>
                 <th>Borrow Date</th>
                 <th>Deadline</th>
                 <th>Late Fee</th>
@@ -34,10 +34,10 @@ else
             {
                 <tr>
                     <td>@borrowing.Id</td>
-                    <td>@borrowing.ReaderId</td>
-                    <td>@borrowing.BookId</td>
+                    <td>@GetReaderName(borrowing.ReaderId)</td>
+                    <td>@GetBookTitle(borrowing.BookId)</td>
                     <td>@borrowing.BorrowDate.ToShortDateString()</td>
-                    <td>@borrowing.ReturnDeadline.ToShortDateString()</td>
+                    <td>@borrowing.DueDate.ToShortDateString()</td>
                     <td class="text-danger fw-bold">@borrowing.LateFee Ft</td>
                     <td>
                         <a href="/Librarian/EditBorrowing/@borrowing.Id" class="btn btn-sm btn-warning">Edit</a>
@@ -50,17 +50,33 @@ else
 }
 @code {
     private List<Borrowing>? borrowings;
+    private List<Reader> readers = new();
+    private List<Book> books = new();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             borrowings = await Http.GetFromJsonAsync<List<Borrowing>>("api/borrowings");
+            readers = await Http.GetFromJsonAsync<List<Reader>>("api/readers") ?? new List<Reader>();
+            books = await Http.GetFromJsonAsync<List<Book>>("api/books") ?? new List<Book>();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching data: {ex.Message}");
         }
+    }
+
+    private string GetReaderName(int id)
+    {        
+        var reader = readers.FirstOrDefault(r => r.Id == id);
+        return reader != null ? reader.Name : "Ismeretlen olvasó";
+    }
+
+    private string GetBookTitle(int id)
+    {
+        var book = books.FirstOrDefault(b => b.Id == id);
+        return book != null ? book.Title : "Ismeretlen könyv";
     }
 
     private async Task DeleteBorrowing(int id)

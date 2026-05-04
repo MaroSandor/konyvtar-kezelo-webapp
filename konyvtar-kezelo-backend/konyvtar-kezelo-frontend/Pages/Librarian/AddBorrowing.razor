@@ -7,31 +7,61 @@
 
 <div class="row">
     <div class="col-md-6">
+        @* Hibaüzenet kijelző doboz *@
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger mb-3">
+                @errorMessage
+            </div>
+        }
+
         <EditForm Model="newBorrowing" OnValidSubmit="HandleValidSubmit">
             <DataAnnotationsValidator />
             
+            @* 1. Olvasó lenyíló lista *@
             <div class="mb-3">
-                <label for="readerId" class="form-label">Reader ID</label>
-                <InputNumber id="readerId" class="form-control" @bind-Value="newBorrowing.ReaderId" />
+                <label for="readerId" class="form-label">Reader</label>
+                <InputSelect id="readerId" class="form-select" @bind-Value="newBorrowing.ReaderId">
+                    <option value="0">-- Select a Reader --</option>
+                    @if (readers != null)
+                    {
+                        @foreach (var reader in readers)
+                        {
+                            <option value="@reader.Id">@reader.Name</option>
+                        }
+                    }
+                </InputSelect>
                 <ValidationMessage For="@(() => newBorrowing.ReaderId)" class="text-danger" />
             </div>
 
+            @* 2. Könyv lenyíló lista *@
             <div class="mb-3">
-                <label for="bookId" class="form-label">Book ID</label>
-                <InputNumber id="bookId" class="form-control" @bind-Value="newBorrowing.BookId" />
+                <label for="bookId" class="form-label">Book</label>
+                <InputSelect id="bookId" class="form-select" @bind-Value="newBorrowing.BookId">
+                    <option value="0">-- Select a Book --</option>
+                    @if (books != null)
+                    {
+                        @foreach (var book in books)
+                        {
+                            <option value="@book.Id">@book.Title</option>
+                        }
+                    }
+                </InputSelect>
                 <ValidationMessage For="@(() => newBorrowing.BookId)" class="text-danger" />
             </div>
 
+            @* 3. Kölcsönzés dátuma *@
             <div class="mb-3">
                 <label for="borrowDate" class="form-label">Borrow Date</label>
                 <InputDate id="borrowDate" class="form-control" @bind-Value="newBorrowing.BorrowDate" />
                 <ValidationMessage For="@(() => newBorrowing.BorrowDate)" class="text-danger" />
             </div>
 
+            @* 4. Határidő (DueDate) *@
             <div class="mb-3">
-                <label for="returnDeadline" class="form-label">Return Deadline</label>
-                <InputDate id="returnDeadline" class="form-control" @bind-Value="newBorrowing.ReturnDeadline" />
-                <ValidationMessage For="@(() => newBorrowing.ReturnDeadline)" class="text-danger" />
+                <label for="dueDate" class="form-label">Due Date</label>
+                <InputDate id="dueDate" class="form-control" @bind-Value="newBorrowing.DueDate" />
+                <ValidationMessage For="@(() => newBorrowing.DueDate)" class="text-danger" />
             </div>
 
             <div class="mt-4">
@@ -43,22 +73,65 @@
 </div>
 
 @code {
-    private Borrowing newBorrowing = new Borrowing();
+    private Borrowing newBorrowing = new Borrowing
+    {
+        BorrowDate = DateTime.Today,
+        DueDate = DateTime.Today.AddDays(14)
+    };
 
-    private async Task HandleValidSubmit()
+    private string errorMessage = "";
+    
+    private List<Reader> readers = new();
+    private List<Book> books = new();
+
+    protected override async Task OnInitializedAsync()
     {
         try
         {
-            var response = await Http.PostAsJsonAsync("api/borrowings", newBorrowing);
+            readers = await Http.GetFromJsonAsync<List<Reader>>("api/readers") ?? new List<Reader>();
+            books = await Http.GetFromJsonAsync<List<Book>>("api/books") ?? new List<Book>();
+        }
+        catch (Exception)
+        {
+            errorMessage = "Failed to load readers or books from the server.";
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        errorMessage = ""; 
+
+        if (newBorrowing.ReaderId == 0 || newBorrowing.BookId == 0)
+        {
+            errorMessage = "Please select both a Reader and a Book.";
+            return;
+        }
+
+        try
+        {
+            var payload = new
+            {
+                ReaderId = newBorrowing.ReaderId,
+                BookId = newBorrowing.BookId,
+                BorrowDate = newBorrowing.BorrowDate,
+                DueDate = newBorrowing.DueDate
+            };
+
+            var response = await Http.PostAsJsonAsync("api/borrowings", payload);
             
             if (response.IsSuccessStatusCode)
             {
                 NavigationManager.NavigateTo("/Librarian/Borrowings");
             }
+            else
+            {
+                var errorDetail = await response.Content.ReadAsStringAsync();
+                errorMessage = $"Mentés sikertelen ({response.StatusCode}). A backend válasza: {errorDetail}";
+            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
+            errorMessage = $"Hiba történt a küldés során: {ex.Message}";
         }
     }
 

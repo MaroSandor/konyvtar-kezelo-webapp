@@ -16,7 +16,7 @@ public class Borrowing : IValidatableObject {
     public DateTime BorrowDate { get; set; } = DateTime.Today;
 
     [Required(ErrorMessage = "Return deadline is required!")]
-    public DateTime ReturnDeadline { get; set; } = DateTime.Today.AddDays(14);
+    public DateTime DueDate { get; set; } = DateTime.Today.AddDays(14);
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
@@ -27,11 +27,11 @@ public class Borrowing : IValidatableObject {
                 new[] { nameof(BorrowDate) });
         }
 
-        if (ReturnDeadline.Date <= BorrowDate.Date)
+        if (DueDate.Date <= BorrowDate.Date)
         {
             yield return new ValidationResult(
                 "Return deadline must be later than the borrow date!",
-                new[] { nameof(ReturnDeadline) });
+                new[] { nameof(DueDate) });
         }
     }
 }

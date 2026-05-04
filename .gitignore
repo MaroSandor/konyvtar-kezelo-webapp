@@ -63,3 +63,4 @@ nunit-*.xml
 # Sources
 *.png
 *.pdf
+/konyvtar-kezelo-backend/konyvtar-kezelo-backend/library.db-shm
