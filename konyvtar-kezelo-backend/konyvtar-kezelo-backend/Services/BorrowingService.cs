@@ -30,7 +30,7 @@ public class BorrowingService : IBorrowingService
         if (borrowing.BorrowDate < DateTime.Today)
             throw new ArgumentException("A kölcsönzési idő nem lehet régebben mint a mai nap!");
         if (borrowing.DueDate <= borrowing.BorrowDate)
-            throw new ArgumentException("A határidő nem lehet régebben mint a kölcsönzési idő!");
+            throw new ArgumentException("A határidő nem lehet hamarabb mint a kölcsőnzési idő!");
         
         _context.Borrowings.Add(borrowing);
         await _context.SaveChangesAsync();
@@ -40,8 +40,6 @@ public class BorrowingService : IBorrowingService
 
     public async Task<BorrowingResponseDto?> UpdateAsync(int id, Borrowing borrowing)
     {
-        if (borrowing.BorrowDate < DateTime.Today)
-            throw new ArgumentException("A kölcsönzési idő nem lehet régebben mint a mai nap!");
         if (borrowing.DueDate <= borrowing.BorrowDate)
             throw new ArgumentException("A határidő nem lehet régebben mint a kölcsönzési idő!");
             
