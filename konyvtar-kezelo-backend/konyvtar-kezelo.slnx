@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="konyvtar-kezelo-backend/konyvtar_kezelo_backend.csproj" />
   <Project Path="konyvtar-kezelo-frontend/konyvtar_kezelo_frontend.csproj" />
-  <Project Path="konyvtar_kezelo_test/konyvtar_kezelo_test.csproj" Id="776db8fc-3be3-49eb-aebe-1d94cca21fd3" />
+  <Project Path="konyvtar_kezelo_test/konyvtar_kezelo_test.csproj" Id="776db8fc-3be3-49eb-aebe-1d94cca21fd3">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
 </Solution>
