@@ -2,28 +2,102 @@
 @using konyvtar_kezelo_frontend.Models
 @inject HttpClient Http
 
-<h3 class="mb-4">Available Books</h3>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">Reader Dashboard</h3>
+    
+    @* SZIMULÁLT BEJELENTKEZÉS *@
+    <div class="d-flex align-items-center bg-secondary p-2 rounded text-white shadow-sm">
+        <label for="readerSelect" class="me-2 fw-bold mb-0">Select Profile:</label>
+        <select id="readerSelect" class="form-select form-select-sm w-auto" @bind="currentReaderId" @bind:after="LoadMyBorrowings">
+            <option value="0">-- Choose a Reader --</option>
+            @if (readers != null)
+            {
+                @foreach (var reader in readers)
+                {
+                    <option value="@reader.Id">@reader.Name</option>
+                }
+            }
+        </select>
+    </div>
+</div>
+
+@* --- 1. SZEKCIÓ: SAJÁT KÖLCSÖNZÉSEK --- *@
+@if (currentReaderId != 0)
+{
+    <h4 class="mb-3 mt-4 border-bottom pb-2">My Borrowings</h4>
+    
+    @if (myBorrowings == null || !myBorrowings.Any())
+    {
+        <div class="alert alert-info shadow-sm">You currently have no active borrowings.</div>
+    }
+    else
+    {
+        <div class="table-responsive mb-5 shadow-sm rounded">
+            <table class="table table-dark table-striped table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Book Title</th>
+                        <th>Borrow Date</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Late Fee</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var borrowing in myBorrowings)
+                    {
+                        
+                        bool isOverdue = borrowing.DueDate < DateTime.Today;
+
+                        <tr>
+                            <td class="fw-bold">@GetBookTitle(borrowing.BookId)</td>
+                            <td>@borrowing.BorrowDate.ToShortDateString()</td>
+                            <td>@borrowing.DueDate.ToShortDateString()</td>
+                            <td>
+                                @if (isOverdue)
+                                {
+                                    <span class="badge bg-danger">Overdue</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                            </td>
+                            <td class="@(borrowing.LateFee > 0 ? "text-danger fw-bold" : "")">
+                                @borrowing.LateFee Ft
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+@* --- 2. SZEKCIÓ: ELÉRHETŐ KÖNYVEK --- *@
+<h4 class="mb-3 mt-4 border-bottom pb-2">Available Books</h4>
 
 @if (availableBooks == null)
 {
-    <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center mb-5">
         <strong>Loading...</strong>
-        <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+        <div class="spinner-border ms-auto text-primary" role="status" aria-hidden="true"></div>
     </div>
 }
 else if (!availableBooks.Any())
 {
-    <div class="alert alert-info">There are currently no books available to borrow.</div>
+    <div class="alert alert-info shadow-sm">There are currently no books available to borrow.</div>
 }
 else
 {
-    <div class="row">
+    <div class="row mb-5">
         @foreach (var book in availableBooks)
         {
             <div class="col-md-4 mb-3">
-                <div class="card h-100 shadow-sm border-primary">
+                @* Hozzáadtam egy kis inline stílust, hogy sötét módban is szép világos maradjon a kártya, ahogy a képeden látszott *@
+                <div class="card h-100 shadow-sm border-primary" style="background-color: #f8f9fa; color: #212529;">
                     <div class="card-body">
-                        <h5 class="card-title text-primary">@book.Title</h5>
+                        <h5 class="card-title text-primary fw-bold">@book.Title</h5>
                         <h6 class="card-subtitle mb-2 text-muted">@book.Author</h6>
                         <hr />
                         <p class="card-text">
@@ -38,24 +112,46 @@ else
 }
 
 @code {
+    private int currentReaderId = 0;
+    
+    private List<Reader>? readers;
+    private List<Book>? allBooks;
     private List<Book>? availableBooks;
+    private List<Borrowing>? allBorrowings;
+    private List<Borrowing>? myBorrowings;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            
-            await Task.Delay(500);
-            availableBooks = new List<Book>
-            {
-                new Book { Id = 1, Title = "The Hobbit", Author = "J.R.R. Tolkien", Publisher = "Allen & Unwin", ReleaseYear = 1937 },
-                new Book { Id = 2, Title = "1984", Author = "George Orwell", Publisher = "Secker & Warburg", ReleaseYear = 1949 },
-                new Book { Id = 3, Title = "Dune", Author = "Frank Herbert", Publisher = "Chilton Books", ReleaseYear = 1965 }
-            };
+            readers = await Http.GetFromJsonAsync<List<Reader>>("api/readers") ?? new();
+            allBooks = await Http.GetFromJsonAsync<List<Book>>("api/books") ?? new();
+            allBorrowings = await Http.GetFromJsonAsync<List<Borrowing>>("api/borrowings") ?? new();
+
+            var borrowedBookIds = allBorrowings.Select(b => b.BookId).ToList();
+            availableBooks = allBooks.Where(b => !borrowedBookIds.Contains(b.Id)).ToList();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching data: {ex.Message}");
         }
+    }
+
+    private void LoadMyBorrowings()
+    {
+        if (currentReaderId != 0 && allBorrowings != null)
+        {
+            myBorrowings = allBorrowings.Where(b => b.ReaderId == currentReaderId).ToList();
+        }
+        else
+        {
+            myBorrowings = new();
+        }
+    }
+
+    private string GetBookTitle(int id)
+    {
+        var book = allBooks?.FirstOrDefault(b => b.Id == id);
+        return book?.Title ?? "Unknown Book";
     }
 }
