@@ -156,3 +156,13 @@ code {
     .theme-toggler:hover {
         transform: scale(1.1);
     }
+
+
+.welcome-text {
+    color: #6c757d;
+}
+
+
+.dark-theme .welcome-text {
+    color: #0d6efd; 
+}
