@@ -16,6 +16,4 @@ public class Reader
     public string Address { get; set; } = string.Empty;
 
     public DateOnly BirthDate { get; set; }
-    
-    public ICollection<Borrowing> Borrowings { get; set; } = [];
 }
