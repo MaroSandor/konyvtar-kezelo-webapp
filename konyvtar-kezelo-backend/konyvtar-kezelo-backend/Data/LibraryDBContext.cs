@@ -20,7 +20,7 @@ public class LibraryDBContext : DbContext
 
         modelBuilder.Entity<Borrowing>()
             .HasOne(b => b.Reader)
-            .WithMany(b => b.Borrowings)
+            .WithMany()
             .HasForeignKey(b => b.ReaderId);
     }
 }
